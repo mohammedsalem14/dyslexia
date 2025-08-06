@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyslexia Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Quiz/style.css">
+</head>
+<body class="font-sans antialiased">
+    <centre>
+    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center rounded-b-lg w-full fixed top-0 left-0 z-10">
+        <h1 class="text-2xl font-bold">Dyslexia Quiz</h1>
+        <button id="settings-toggle" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+            Settings
+        </button>
+    </header>
+
+    <main id="main-content" class="container mx-auto p-6 mt-20 mb-8">
+        <div class="quiz-container">
+            <h1 class="text-3xl font-bold text-center mb-6">Dyslexia Quiz</h1>
+
+            <div id="quiz-display">
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <p id="question-counter" class="text-sm text-gray-600 mb-2 text-right"></p>
+                <p id="question" class="question-text"></p>
+                <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="nextButton" class="control-button bg-blue-500 hover:bg-blue-600" disabled>Next</button>
+                    <button id="submitButton" class="control-button bg-green-500 hover:bg-green-600" disabled>Submit Answer</button>
+                </div>
+            </div>
+
+            <div id="result-display" class="hidden text-center">
+                <h2 class="text-2xl font-bold mb-4">Quiz Complete!</h2>
+                <p id="score-text" class="text-xl mb-6">Your score: 0 / 0</p>
+                <button id="restartButton" class="control-button bg-indigo-600 hover:bg-indigo-700">Restart Quiz</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="settings-panel" class="bg-gray-50 text-gray-800">
+        <h3 class="text-xl font-bold mb-6 text-center text-gray-700">Dyslexia Settings</h3>
+
+        <div class="settings-option mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <label for="font-family-select" class="text-lg">Font Family:</label>
+            <select id="font-family-select" class="mt-2 focus:ring-blue-500 focus:border-blue-500 w-full p-2 border border-gray-300 rounded-md">
+                <option value="Inter">Inter (Default)</option>
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="OpenDyslexic">OpenDyslexic</option>
+            </select>
+        </div>
+
+        <div class="settings-option mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <label for="font-size-slider" class="text-lg flex justify-between items-center">
+                Font Size: <span id="font-size-value" class="text-blue-600 font-semibold">16px</span>
+            </label>
+            <input type="range" id="font-size-slider" min="12" max="24" value="16" step="1" class="mt-2">
+        </div>
+
+        <div class="settings-option mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <label for="line-height-slider" class="text-lg flex justify-between items-center">
+                Line Height: <span id="line-height-value" class="text-blue-600 font-semibold">1.8</span>
+            </label>
+            <input type="range" id="line-height-slider" min="1.2" max="2.5" value="1.8" step="0.1" class="mt-2">
+        </div>
+
+        <div class="settings-option mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <label for="letter-spacing-slider" class="text-lg flex justify-between items-center">
+                Letter Spacing: <span id="letter-spacing-value" class="text-blue-600 font-semibold">0.05em</span>
+            </label>
+            <input type="range" id="letter-spacing-slider" min="0" max="0.1" value="0.05" step="0.01" class="mt-2">
+        </div>
+
+        <div class="settings-option mb-6 p-4 bg-white rounded-lg shadow-sm">
+            <label class="text-lg block mb-2">Color Theme:</label>
+            <button id="normal-theme-btn" class="bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 rounded-md">Normal</button>
+            <button id="dark-mode-btn" class="bg-gray-700 text-white hover:bg-gray-800 py-2 px-4 rounded-md">Dark Mode</button>
+            <button id="high-contrast-btn" class="bg-yellow-500 text-gray-900 hover:bg-yellow-600 py-2 px-4 rounded-md">High Contrast</button>
+        </div>
+
+        <button id="close-settings-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300">
+            Close Settings
+        </button>
+    </div>
+
+    <script src="Quiz/script.js"></script>
+    </centre>
+</body>
+</html>
