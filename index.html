@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DyslexiCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=OpenDyslexic&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Main/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-custom-gradient text-white min-h-screen">
+    <header class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <div class="flex items-center">
+            <span class="text-xl font-bold text-white">DyslexiCare</span>
+        </div>
+        <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-gray-300">
+            <a href="#" class="hover:text-white transition-colors duration-300">Games</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Quizzes</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Pronunciation tests</a>
+            <a href="#" class="hover:text-white transition-colors duration-300">Writing test</a>
+        </nav>
+        <button id="settings-toggle" class="bg-[#8356E2] text-white font-medium py-2 px-6 rounded-full text-sm hover:bg-[#6a44b1] transition-colors duration-300">
+            Settings
+        </button>
+    </header>
+    <main class="container mx-auto px-4 py-16 flex flex-col lg:flex-row items-center justify-between min-h-[calc(100vh-120px)]">
+        <div class="lg:w-1/2 text-left mb-12 lg:mb-0">
+            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+                be better even with <br>Dyslexia
+            </h1>
+            <p class="text-lg text-gray-400 mb-8 max-w-lg">
+                A website made by 3 programmers to help people to read and write and also have fun playing games.
+            </p>
+            <a href="#" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                Start Exploring
+            </a>
+        </div>
+    </main>
+    <div id="settings-panel">
+        <div class="settings-content text-white">
+            <h3 class="text-2xl font-bold mb-6 text-center text-white">Dyslexia Settings</h3>
+            <div class="settings-option mb-6 p-4 bg-gray-700 rounded-lg shadow-sm">
+                <label for="font-family-select" class="text-lg">Font Family:</label>
+                <select id="font-family-select" class="mt-2 w-full p-2 border-gray-600 rounded-md bg-gray-800 text-white focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Inter, sans-serif">Inter (Default)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="Verdana, sans-serif">Verdana</option>
+                    <option value="'Open Sans', sans-serif">Open Sans</option>
+                    <option value="'OpenDyslexic', sans-serif">OpenDyslexic</option>
+                </select>
+            </div>
+            <div class="settings-option mb-6 p-4 bg-gray-700 rounded-lg shadow-sm">
+                <label for="font-size-slider" class="text-lg flex justify-between items-center">
+                    Font Size: <span id="font-size-value" class="text-blue-400 font-semibold">16px</span>
+                </label>
+                <input type="range" id="font-size-slider" min="12" max="24" value="16" step="1" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div class="settings-option mb-6 p-4 bg-gray-700 rounded-lg shadow-sm">
+                <label for="line-height-slider" class="text-lg flex justify-between items-center">
+                    Line Height: <span id="line-height-value" class="text-blue-400 font-semibold">1.6</span>
+                </label>
+                <input type="range" id="line-height-slider" min="1.2" max="2.5" value="1.6" step="0.1" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div class="settings-option mb-6 p-4 bg-gray-700 rounded-lg shadow-sm">
+                <label for="letter-spacing-slider" class="text-lg flex justify-between items-center">
+                    Letter Spacing: <span id="letter-spacing-value" class="text-blue-400 font-semibold">0.03em</span>
+                </label>
+                <input type="range" id="letter-spacing-slider" min="0" max="0.1" value="0.03" step="0.01" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div class="settings-option mb-6 p-4 bg-gray-700 rounded-lg shadow-sm">
+                <label class="text-lg block mb-2">Color Theme:</label>
+                <div class="flex space-x-2">
+                    <button id="normal-theme-btn" class="flex-1 bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">Normal</button>
+                    <button id="dark-mode-btn" class="flex-1 bg-gray-800 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-900 transition-colors">Dark Mode</button>
+                </div>
+            </div>
+            <button id="close-settings-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300">
+                Close Settings
+            </button>
+        </div>
+    </div>
+    <script src="Main/script.js"></script>
+</body>
+</html>
