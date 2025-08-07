@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dyslexia Mini-Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="gamePage/style.css">
+</head>
+<body>
+    <div class="main-container">
+        <div id="main-menu" class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+                Mini-Games
+            </h1>
+            <p class="text-lg text-gray-400 mb-8 max-w-lg mx-auto">
+                Select a game to start playing.
+            </p>
+            <div class="btn-container flex flex-wrap justify-center gap-4 mt-8">
+                <button id="startGame1Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                    <i class="fas fa-keyboard"></i> Letter Typer
+                </button>
+                <button id="startGame2Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                    <i class="fas fa-spell-check"></i> Word Scramble
+                </button>
+                <button id="startGame3Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                    <i class="fas fa-redo-alt"></i> Memory Sequence
+                </button>
+            </div>
+        </div>
+        
+        <div id="game-screen" class="w-full flex-grow flex flex-col items-center" style="display: none;">
+            <div class="game-header w-full flex justify-between items-center mb-4 text-xl">
+                <div id="score-display">Score: 0</div>
+                <div id="time-display">Time: 0</div>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div class="btn-container mt-8">
+                <button id="returnToMenuBtn" class="bg-gray-600 text-white font-medium py-3 px-8 rounded-full text-md hover:bg-gray-700 transition-colors duration-300">
+                    <i class="fas fa-home"></i> Back to Menu
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="message-box-backdrop" id="backdrop"></div>
+    <div class="message-box" id="messageBox">
+        <div class="message-box-title" id="messageBoxTitle"></div>
+        <div class="message-box-body" id="messageBoxBody"></div>
+        <button id="closeMessageBoxBtn" class="w-full bg-[#8356E2] text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300">OK</button>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="gamePage/script.js"></script>
+</body>
+</html>
