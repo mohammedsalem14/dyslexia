@@ -3,57 +3,844 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dyslexia Mini-Games</title>
+    <title>DyslexiCare</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=OpenDyslexic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="gamePage/style.css">
-</head>
-<body>
-    <div class="main-container">
-        <div id="main-menu" class="text-center mb-12">
-            <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6">
-                Mini-Games
-            </h1>
-            <p class="text-lg text-gray-400 mb-8 max-w-lg mx-auto">
-                Select a game to start playing.
-            </p>
-            <div class="btn-container flex flex-wrap justify-center gap-4 mt-8">
-                <button id="startGame1Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
-                    <i class="fas fa-keyboard"></i> Letter Typer
-                </button>
-                <button id="startGame2Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
-                    <i class="fas fa-spell-check"></i> Word Scramble
-                </button>
-                <button id="startGame3Btn" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
-                    <i class="fas fa-redo-alt"></i> Memory Sequence
-                </button>
-            </div>
-        </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styles for the futuristic gradient and open-dyslexic font */
+        :root {
+            --font-family: 'OpenDyslexic', sans-serif;
+            --font-size: 16px;
+            --line-height: 1.6;
+            --letter-spacing: 0.03em;
+        }
+
+        body {
+            background: #141E30; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #243B55, #141E30); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            font-family: var(--font-family);
+            font-size: var(--font-size);
+            line-height: var(--line-height);
+            letter-spacing: var(--letter-spacing);
+        }
+
+        body.ar {
+            --font-family: 'Noto Sans Arabic', sans-serif;
+        }
         
-        <div id="game-screen" class="w-full flex-grow flex flex-col items-center" style="display: none;">
-            <div class="game-header w-full flex justify-between items-center mb-4 text-xl">
-                <div id="score-display">Score: 0</div>
-                <div id="time-display">Time: 0</div>
+        .settings-panel-wrapper {
+            position: fixed;
+            top: 0;
+            right: -350px; /* Initially hidden */
+            width: 350px;
+            height: 100%;
+            background: #1f2937;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            transition: right 0.3s ease-in-out;
+            z-index: 1000;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-panel-wrapper.open {
+            right: 0;
+        }
+
+        .settings-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .settings-option {
+            background-color: #374151;
+            border-radius: 0.5rem;
+        }
+
+        /* Message box styles */
+        .message-box-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1f2937;
+            border: 2px solid #8356E2;
+            border-radius: 12px;
+            padding: 2rem;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(131, 86, 226, 0.5);
+            max-width: 80%;
+            font-size: 1.2rem;
+            line-height: 1.5;
+            display: none;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Responsive styling for mobile */
+        @media (max-width: 768px) {
+            .settings-panel-wrapper {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <header class="container mx-auto px-4 py-6 flex justify-between items-center relative">
+        <div class="flex items-center">
+            <span class="text-xl font-bold text-white" data-i18n="app-title">DyslexiCare</span>
+        </div>
+        <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-gray-300">
+            
+            <a href="index.html" class="hover:text-white transition-colors duration-300" data-i18n="nav-quizzes">home</a>
+           
+        </nav>
+        <button id="settings-toggle" class="bg-[#8356E2] text-white font-medium py-2 px-6 rounded-full text-sm hover:bg-[#6a44b1] transition-colors duration-300">
+            <span data-i18n="settings-button">Settings</span>
+        </button>
+    </header>
+
+    <main id="app-container" class="container mx-auto px-4 py-16 text-center">
+        <!-- Content will be dynamically loaded here -->
+    </main>
+
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="settings-panel-wrapper">
+        <div class="settings-content text-white">
+            <h3 class="text-2xl font-bold mb-6 text-center text-white" data-i18n="settings-panel-title">Dyslexia Settings</h3>
+            <div class="settings-option mb-6 p-4 rounded-lg shadow-sm">
+                <label for="font-family-select" class="text-lg" data-i18n="font-family-label">Font Family:</label>
+                <select id="font-family-select" class="mt-2 w-full p-2 border-gray-600 rounded-md bg-gray-800 text-white focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Inter, sans-serif" data-i18n="font-inter">Inter (Default)</option>
+                    <option value="Arial, sans-serif" data-i18n="font-arial">Arial</option>
+                    <option value="Verdana, sans-serif" data-i18n="font-verdana">Verdana</option>
+                    <option value="'Open Sans', sans-serif" data-i18n="font-open-sans">Open Sans</option>
+                    <option value="'OpenDyslexic', sans-serif" data-i18n="font-open-dyslexic">OpenDyslexic</option>
+                </select>
             </div>
-            <canvas id="game-canvas"></canvas>
-            <div class="btn-container mt-8">
-                <button id="returnToMenuBtn" class="bg-gray-600 text-white font-medium py-3 px-8 rounded-full text-md hover:bg-gray-700 transition-colors duration-300">
-                    <i class="fas fa-home"></i> Back to Menu
-                </button>
+            <div class="settings-option mb-6 p-4 rounded-lg shadow-sm">
+                <label for="font-size-slider" class="text-lg flex justify-between items-center" data-i18n="font-size-label">
+                    Font Size: <span id="font-size-value" class="text-blue-400 font-semibold">16px</span>
+                </label>
+                <input type="range" id="font-size-slider" min="12" max="24" value="16" step="1" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
             </div>
+            <div class="settings-option mb-6 p-4 rounded-lg shadow-sm">
+                <label for="line-height-slider" class="text-lg flex justify-between items-center" data-i18n="line-height-label">
+                    Line Height: <span id="line-height-value" class="text-blue-400 font-semibold">1.6</span>
+                </label>
+                <input type="range" id="line-height-slider" min="1.2" max="2.5" value="1.6" step="0.1" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div class="settings-option mb-6 p-4 rounded-lg shadow-sm">
+                <label for="letter-spacing-slider" class="text-lg flex justify-between items-center" data-i18n="letter-spacing-label">
+                    Letter Spacing: <span id="letter-spacing-value" class="text-blue-400 font-semibold">0.03em</span>
+                </label>
+                <input type="range" id="letter-spacing-slider" min="0" max="0.1" value="0.03" step="0.01" class="mt-2 w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div class="settings-option mb-6 p-4 rounded-lg shadow-sm">
+                <label class="text-lg block mb-2" data-i18n="language-label">Languages:</label>
+                <div class="flex space-x-2">
+                    <button id="lang-en-btn" class="flex-1 bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-colors" data-i18n="lang-en">English</button>
+                    <button id="lang-ar-btn" class="flex-1 bg-gray-800 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-900 transition-colors" data-i18n="lang-ar">Arabic</button>
+                </div>
+            </div>
+            <button id="close-settings-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300">
+                <span data-i18n="close-settings-btn">Close Settings</span>
+            </button>
         </div>
     </div>
-    
+
+    <!-- Message box for instructions and game-over -->
     <div class="message-box-backdrop" id="backdrop"></div>
     <div class="message-box" id="messageBox">
         <div class="message-box-title" id="messageBoxTitle"></div>
         <div class="message-box-body" id="messageBoxBody"></div>
-        <button id="closeMessageBoxBtn" class="w-full bg-[#8356E2] text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300">OK</button>
+        <button id="closeMessageBoxBtn" class="w-full bg-[#8356E2] text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors duration-300" data-i18n="ok-button">OK</button>
     </div>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="gamePage/script.js"></script>
+    <script>
+        // Translations object
+        const translations = {
+            'en': {
+                'app-title': 'DyslexiCare',
+                'nav-games': 'Games',
+                'nav-quizzes': 'Home',
+                'nav-pronunciation': 'Pronunciation tests',
+                'nav-writing': 'Writing test',
+                'settings-button': 'Settings',
+                'main-heading': 'play games and have fun!',
+                'main-subheading': 'select a game to play.',
+                'game1-btn': 'Letter Typer',
+                'game2-btn': 'Word Scramble',
+                'game3-btn': 'Memory Sequence',
+                'score-label': 'Score',
+                'time-label': 'Time',
+                'back-to-menu-btn': 'Back to Menu',
+                'settings-panel-title': 'Dyslexia Settings',
+                'font-family-label': 'Font Family:',
+                'font-size-label': 'Font Size:',
+                'line-height-label': 'Line Height:',
+                'letter-spacing-label': 'Letter Spacing:',
+                'language-label': 'Languages:',
+                'lang-en': 'English',
+                'lang-ar': 'Arabic',
+                'close-settings-btn': 'Close Settings',
+                'game1-title': 'Letter Typer',
+                'game1-instructions': 'Letters will fall from the sky. Type the correct letter on your keyboard to clear it before it hits the bottom. The game ends when 10 letters are missed!',
+                'game1-game-over': 'Game Over!',
+                'game1-game-over-body': (score, time) => `You missed too many letters. Your final score is ${score} in ${time} seconds.`,
+                'game2-title': 'Word Scramble',
+                'game2-instructions': 'A scrambled word will appear. Type the correct word and press Enter to score points. Be quick!',
+                'game2-correct': 'Correct!',
+                'game2-correct-body': (word) => `You unscrambled the word "${word}". Great job!`,
+                'game2-incorrect': 'Incorrect',
+                'game2-incorrect-body': 'That\'s not the right word. Try again!',
+                'game3-title': 'Memory Sequence',
+                'game3-instructions': 'Watch a sequence of colored circles light up. Once it stops, click the circles in the correct order to score!',
+                'game3-correct': 'Correct!',
+                'game3-correct-body': 'You completed the sequence! A new, longer one will begin.',
+                'game3-game-over': 'Game Over!',
+                'game3-game-over-body': (score, time) => `Incorrect sequence. Your final score is ${score} in ${time} seconds.`,
+                'ok-button': 'OK'
+            },
+            'ar': {
+                'app-title': 'رعاية عسر القراءة',
+                'nav-games': 'الألعاب',
+                'nav-quizzes': 'الاختبارات',
+                'nav-pronunciation': 'اختبارات النطق',
+                'nav-writing': 'اختبار الكتابة',
+                'settings-button': 'الإعدادات',
+                'main-heading': 'كن أفضل حتى مع <br>عسر القراءة',
+                'main-subheading': 'موقع إلكتروني صممه 3 مبرمجين لمساعدة الأشخاص على القراءة والكتابة والاستمتاع بالألعاب.',
+                'game1-btn': 'كاتب الحروف',
+                'game2-btn': 'كلمة مشوشة',
+                'game3-btn': 'تسلسل الذاكرة',
+                'score-label': 'النتيجة',
+                'time-label': 'الوقت',
+                'back-to-menu-btn': 'العودة إلى القائمة',
+                'settings-panel-title': 'إعدادات عسر القراءة',
+                'font-family-label': 'عائلة الخط:',
+                'font-size-label': 'حجم الخط:',
+                'line-height-label': 'ارتفاع السطر:',
+                'letter-spacing-label': 'تباعد الأحرف:',
+                'language-label': 'اللغات:',
+                'lang-en': 'الإنجليزية',
+                'lang-ar': 'العربية',
+                'close-settings-btn': 'إغلاق الإعدادات',
+                'game1-title': 'كاتب الحروف',
+                'game1-instructions': 'ستسقط الحروف من السماء. اكتب الحرف الصحيح على لوحة المفاتيح لمسحه قبل أن يصل إلى الأسفل. تنتهي اللعبة عند فقدان 10 أحرف!',
+                'game1-game-over': '!انتهت اللعبة',
+                'game1-game-over-body': (score, time) => `لقد فاتك عدد كبير من الحروف. نتيجتك النهائية هي ${score} في ${time} ثانية.`,
+                'game2-title': 'كلمة مشوشة',
+                'game2-instructions': 'ستظهر كلمة مشوشة. اكتب الكلمة الصحيحة واضغط على Enter لتسجيل النقاط. كن سريعا!',
+                'game2-correct': '!صحيح',
+                'game2-correct-body': (word) => `لقد قمت بفك تشويش كلمة "${word}". عمل رائع!`,
+                'game2-incorrect': 'غير صحيح',
+                'game2-incorrect-body': 'هذه ليست الكلمة الصحيحة. حاول مرة أخرى!',
+                'game3-title': 'تسلسل الذاكرة',
+                'game3-instructions': 'شاهد تسلسل الدوائر الملونة وهي تضيء. بمجرد أن تتوقف، انقر على الدوائر بالترتيب الصحيح لتسجيل النقاط!',
+                'game3-correct': '!صحيح',
+                'game3-correct-body': 'لقد أكملت التسلسل! سيبدأ تسلسل جديد وأطول.',
+                'game3-game-over': '!انتهت اللعبة',
+                'game3-game-over-body': (score, time) => `تسلسل غير صحيح. نتيجتك النهائية هي ${score} في ${time} ثانية.`,
+                'ok-button': 'موافق'
+            }
+        };
+
+        // DOM Elements
+        const appContainer = document.getElementById('app-container');
+        const messageBox = document.getElementById('messageBox');
+        const backdrop = document.getElementById('backdrop');
+        const messageBoxTitle = document.getElementById('messageBoxTitle');
+        const messageBoxBody = document.getElementById('messageBoxBody');
+        const closeMessageBoxBtn = document.getElementById('closeMessageBoxBtn');
+
+        // Settings panel elements
+        const settingsToggleBtn = document.getElementById('settings-toggle');
+        const settingsPanel = document.getElementById('settings-panel');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const langEnBtn = document.getElementById('lang-en-btn');
+        const langArBtn = document.getElementById('lang-ar-btn');
+        
+        // Dyslexia settings
+        const root = document.documentElement;
+        const fontFamilySelect = document.getElementById('font-family-select');
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        const lineHeightSlider = document.getElementById('line-height-slider');
+        const lineHeightValue = document.getElementById('line-height-value');
+        const letterSpacingSlider = document.getElementById('letter-spacing-slider');
+        const letterSpacingValue = document.getElementById('letter-spacing-value');
+
+        // State variables
+        let currentGameState = null;
+        let score = 0;
+        let gameActive = false;
+        let gameTime = 0;
+        let timeInterval = null;
+        let currentLanguage = 'en';
+        let canvas = null;
+        let ctx = null;
+        let scoreDisplay = null;
+        let timeDisplay = null;
+
+        // Games Configuration
+        const gameConfigs = {
+            'game1': {
+                titleKey: 'game1-title',
+                instructionsKey: 'game1-instructions',
+                init: initGame1,
+                update: updateGame1,
+                draw: drawGame1,
+                handleInput: handleInputGame1,
+                gameOverTitleKey: 'game1-game-over',
+                gameOverBodyKey: 'game1-game-over-body',
+            },
+            'game2': {
+                titleKey: 'game2-title',
+                instructionsKey: 'game2-instructions',
+                init: initGame2,
+                update: updateGame2,
+                draw: drawGame2,
+                handleInput: handleInputGame2,
+            },
+            'game3': {
+                titleKey: 'game3-title',
+                instructionsKey: 'game3-instructions',
+                init: initGame3,
+                update: updateGame3,
+                draw: drawGame3,
+                handleInput: handleInputGame3,
+                gameOverTitleKey: 'game3-game-over',
+                gameOverBodyKey: 'game3-game-over-body',
+            }
+        };
+
+        // Function to apply language and text to all elements
+        function applyLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('ar', lang === 'ar');
+
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                let text = translations[lang][key];
+
+                if (text) {
+                    element.innerHTML = text;
+                }
+            });
+            if (scoreDisplay) scoreDisplay.textContent = `${translations[currentLanguage]['score-label']}: ${score}`;
+            if (timeDisplay) timeDisplay.textContent = `${translations[currentLanguage]['time-label']}: ${gameTime}`;
+            localStorage.setItem('lang', lang);
+        }
+
+        // Apply saved language on load
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('lang');
+            if (savedLang) {
+                applyLanguage(savedLang);
+                if (savedLang === 'en') {
+                    langEnBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    langEnBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900');
+                    langArBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    langArBtn.classList.add('bg-gray-800', 'hover:bg-gray-900');
+                } else {
+                    langArBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    langArBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900');
+                    langEnBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                    langEnBtn.classList.add('bg-gray-800', 'hover:bg-gray-900');
+                }
+            } else {
+                applyLanguage('en');
+            }
+        }
+
+        // Function to show a custom message box
+        function showMessageBox(title, body) {
+            messageBoxTitle.innerHTML = title;
+            messageBoxBody.innerHTML = body;
+            messageBox.style.display = 'flex';
+            backdrop.style.display = 'block';
+        }
+
+        // Hides the custom message box
+        function hideMessageBox() {
+            messageBox.style.display = 'none';
+            backdrop.style.display = 'none';
+        }
+        
+        // Resets game state and returns to main menu
+        function returnToMenu() {
+            gameActive = false;
+            clearInterval(timeInterval);
+            window.location.hash = '';
+            
+            // Clean up event listeners
+            window.removeEventListener('keydown', handleInputGame1);
+            window.removeEventListener('keydown', handleInputGame2);
+            if (canvas) canvas.removeEventListener('mousedown', handleInputGame3);
+
+            currentGameState = null;
+        }
+
+        // The main game loop
+        function gameLoop() {
+            if (!gameActive) return;
+
+            currentGameState.update();
+            currentGameState.draw();
+
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        // --- Game 1: Letter Typer Logic ---
+        function initGame1() {
+            return { letters: [], missedCount: 0, lastSpawnTime: 0, minSpawnInterval: 1000 };
+        }
+
+        function updateGame1() {
+            const now = Date.now();
+            if (now - currentGameState.state.lastSpawnTime > currentGameState.state.minSpawnInterval) {
+                const randomChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                const x = Math.random() * (canvas.width - 50);
+                currentGameState.state.letters.push({ char: randomChar, x: x, y: 0, speed: 1 + (score / 100) });
+                currentGameState.state.lastSpawnTime = now;
+            }
+
+            currentGameState.state.letters.forEach(letter => { letter.y += letter.speed; });
+
+            currentGameState.state.letters = currentGameState.state.letters.filter(letter => {
+                if (letter.y < canvas.height - 30) {
+                    return true;
+                } else {
+                    currentGameState.state.missedCount++;
+                    return false;
+                }
+            });
+
+            if (currentGameState.state.missedCount >= 10) {
+                gameActive = false;
+                clearInterval(timeInterval);
+                const title = translations[currentLanguage]['game1-game-over'];
+                const body = translations[currentLanguage]['game1-game-over-body'](score, gameTime);
+                showMessageBox(title, body);
+                closeMessageBoxBtn.onclick = returnToMenu;
+            }
+        }
+
+        function drawGame1() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const fontSize = getComputedStyle(root).getPropertyValue('--font-size').replace('px', '');
+            const fontFamily = getComputedStyle(root).getPropertyValue('--font-family');
+            const letterSpacing = getComputedStyle(root).getPropertyValue('--letter-spacing');
+
+            ctx.font = `${fontSize * 1.5}px ${fontFamily}`;
+            ctx.letterSpacing = letterSpacing;
+            ctx.fillStyle = '#ffffff';
+            currentGameState.state.letters.forEach(letter => {
+                ctx.fillText(letter.char, letter.x, letter.y);
+            });
+
+            ctx.font = `${fontSize * 1.2}px ${fontFamily}`;
+            ctx.fillStyle = '#ff5555';
+            ctx.letterSpacing = letterSpacing;
+            const missedText = translations[currentLanguage]['score-label']; // Using score-label for consistency
+            ctx.fillText(`${missedText}: ${currentGameState.state.missedCount}/10`, 10, 30);
+        }
+
+        function handleInputGame1(event) {
+            if (!gameActive) return;
+            const typedChar = event.key.toUpperCase();
+            const foundIndex = currentGameState.state.letters.findIndex(letter => letter.char === typedChar);
+            if (foundIndex !== -1) {
+                currentGameState.state.letters.splice(foundIndex, 1);
+                score += 10;
+                scoreDisplay.textContent = `${translations[currentLanguage]['score-label']}: ${score}`;
+            }
+        }
+
+        // --- Game 2: Word Scramble Logic ---
+        const wordList = ['APPLE', 'BANANA', 'ORANGE', 'GRAPE', 'STRAWBERRY', 'MANGO', 'CHERRY'];
+        let currentWord = '';
+        let scrambledWord = '';
+        let inputString = '';
+
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function newWord() {
+            currentWord = wordList[Math.floor(Math.random() * wordList.length)];
+            scrambledWord = shuffle(currentWord.split('')).join('');
+            inputString = '';
+        }
+
+        function initGame2() {
+            newWord();
+            return {};
+        }
+
+        function updateGame2() {}
+
+        function drawGame2() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const fontSize = getComputedStyle(root).getPropertyValue('--font-size').replace('px', '');
+            const fontFamily = getComputedStyle(root).getPropertyValue('--font-family');
+            const letterSpacing = getComputedStyle(root).getPropertyValue('--letter-spacing');
+
+            ctx.font = `${fontSize * 3}px ${fontFamily}`;
+            ctx.letterSpacing = letterSpacing;
+            ctx.textAlign = 'center';
+
+            ctx.fillStyle = '#8356E2';
+            ctx.fillText(scrambledWord, canvas.width / 2, canvas.height / 2 - 40);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(inputString, canvas.width / 2, canvas.height / 2 + 40);
+
+            ctx.textAlign = 'left';
+        }
+
+        function handleInputGame2(event) {
+            if (!gameActive) return;
+            const key = event.key;
+            if (key.length === 1 && key.match(/[a-zA-Z]/)) {
+                inputString += key.toUpperCase();
+            } else if (key === 'Backspace') {
+                inputString = inputString.slice(0, -1);
+            } else if (key === 'Enter') {
+                if (inputString === currentWord) {
+                    score += 50;
+                    scoreDisplay.textContent = `${translations[currentLanguage]['score-label']}: ${score}`;
+                    const title = translations[currentLanguage]['game2-correct'];
+                    const body = translations[currentLanguage]['game2-correct-body'](currentWord);
+                    showMessageBox(title, body);
+                } else {
+                    const title = translations[currentLanguage]['game2-incorrect'];
+                    const body = translations[currentLanguage]['game2-incorrect-body'];
+                    showMessageBox(title, body);
+                }
+                newWord();
+                closeMessageBoxBtn.onclick = hideMessageBox;
+            }
+        }
+
+        // --- Game 3: Memory Sequence Logic ---
+        const colors = ['#ff5252', '#ffd740', '#69f0ae', '#448aff'];
+        let sequence = [];
+        let playerSequence = [];
+        let isShowingSequence = false;
+        let showTimeout = null;
+
+        function addColorToSequence() {
+            sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+            playerSequence = [];
+            isShowingSequence = true;
+            showSequence();
+        }
+
+        function showSequence() {
+            let i = 0;
+            function showNextColor() {
+                if (i < sequence.length) {
+                    const color = sequence[i];
+                    drawGame3(color);
+                    i++;
+                    showTimeout = setTimeout(showNextColor, 1000);
+                } else {
+                    isShowingSequence = false;
+                    drawGame3();
+                }
+            }
+            showNextColor();
+        }
+
+        function initGame3() {
+            sequence = [];
+            addColorToSequence();
+            return {};
+        }
+
+        function updateGame3() {}
+
+        function drawGame3(activeColor = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const radius = 50;
+            const xPositions = [canvas.width * 0.2, canvas.width * 0.4, canvas.width * 0.6, canvas.width * 0.8];
+            const y = canvas.height / 2;
+
+            for (let i = 0; i < colors.length; i++) {
+                ctx.beginPath();
+                ctx.arc(xPositions[i], y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = colors[i] === activeColor ? colors[i] : 'rgba(255, 255, 255, 0.2)';
+                ctx.fill();
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 5;
+                ctx.stroke();
+            }
+        }
+
+        function handleInputGame3(event) {
+            if (!gameActive || isShowingSequence) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            const radius = 50;
+            const xPositions = [canvas.width * 0.2, canvas.width * 0.4, canvas.width * 0.6, canvas.width * 0.8];
+            const y = canvas.height / 2;
+
+            let clickedColorIndex = -1;
+            for (let i = 0; i < xPositions.length; i++) {
+                const dist = Math.sqrt((mouseX - xPositions[i]) ** 2 + (mouseY - y) ** 2);
+                if (dist < radius) {
+                    clickedColorIndex = i;
+                    break;
+                }
+            }
+
+            if (clickedColorIndex !== -1) {
+                playerSequence.push(colors[clickedColorIndex]);
+                if (playerSequence.length <= sequence.length) {
+                    if (playerSequence[playerSequence.length - 1] === sequence[playerSequence.length - 1]) {
+                        if (playerSequence.length === sequence.length) {
+                            score += sequence.length * 10;
+                            scoreDisplay.textContent = `${translations[currentLanguage]['score-label']}: ${score}`;
+                            const title = translations[currentLanguage]['game3-correct'];
+                            const body = translations[currentLanguage]['game3-correct-body'];
+                            showMessageBox(title, body);
+                            closeMessageBoxBtn.onclick = () => {
+                                hideMessageBox();
+                                addColorToSequence();
+                            };
+                        }
+                    } else {
+                        gameActive = false;
+                        clearInterval(timeInterval);
+                        const title = translations[currentLanguage]['game3-game-over'];
+                        const body = translations[currentLanguage]['game3-game-over-body'](score, gameTime);
+                        showMessageBox(title, body);
+                        closeMessageBoxBtn.onclick = returnToMenu;
+                    }
+                }
+            }
+        }
+
+        // Dynamic page content and routing
+        function loadPage(page) {
+            appContainer.innerHTML = ''; // Clear previous content
+            
+            if (page === 'home' || page === '') {
+                appContainer.innerHTML = `
+                    <div id="main-menu" class="lg:w-1/2 text-center mb-12 lg:mb-0">
+                        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight mb-6" data-i18n="main-heading">
+                            be better even with <br>Dyslexia
+                        </h1>
+                        <p class="text-lg text-gray-400 mb-8 max-w-lg mx-auto" data-i18n="main-subheading">
+                            A website made by 3 programmers to help people to read and write and also have fun playing games.
+                        </p>
+                        <div class="btn-container flex flex-wrap justify-center gap-4 mt-8">
+                            <button onclick="window.location.hash = 'game1'" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                                <i class="fas fa-keyboard"></i> <span data-i18n="game1-btn">Letter Typer</span>
+                            </button>
+                            <button onclick="window.location.hash = 'game2'" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                                <i class="fas fa-spell-check"></i> <span data-i18n="game2-btn">Word Scramble</span>
+                            </button>
+                            <button onclick="window.location.hash = 'game3'" class="bg-[#8356E2] text-white font-medium py-3 px-8 rounded-full text-md hover:bg-[#6a44b1] transition-colors duration-300">
+                                <i class="fas fa-redo-alt"></i> <span data-i18n="game3-btn">Memory Sequence</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                // Apply language after content is loaded
+                applyLanguage(currentLanguage);
+            } else if (page === 'game1' || page === 'game2' || page === 'game3') {
+                const gameName = page;
+                const config = gameConfigs[gameName];
+
+                appContainer.innerHTML = `
+                    <div id="game-screen" class="w-full flex-grow flex flex-col items-center">
+                        <div class="game-header w-full flex justify-between items-center mb-4 text-xl">
+                            <div id="score-display" class="w-1/3 text-left"></div>
+                            <div id="time-display" class="w-1/3 text-right"></div>
+                        </div>
+                        <canvas id="game-canvas" class="bg-gray-800 rounded-lg shadow-lg border border-[#8356E2]" width="800" height="400"></canvas>
+                        <div class="btn-container mt-8">
+                            <button id="returnToMenuBtn" class="bg-gray-600 text-white font-medium py-3 px-8 rounded-full text-md hover:bg-gray-700 transition-colors duration-300">
+                                <i class="fas fa-home"></i> <span data-i18n="back-to-menu-btn">Back to Menu</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                // Get new elements and start the game
+                canvas = document.getElementById('game-canvas');
+                ctx = canvas.getContext('2d');
+                scoreDisplay = document.getElementById('score-display');
+                timeDisplay = document.getElementById('time-display');
+                document.getElementById('returnToMenuBtn').addEventListener('click', returnToMenu);
+
+                applyLanguage(currentLanguage);
+                resizeCanvas();
+                startGame(gameName);
+            }
+        }
+        
+        function handleHashChange() {
+            const page = window.location.hash.substring(1);
+            loadPage(page);
+        }
+
+        // Starts a new game
+        function startGame(gameName) {
+            const config = gameConfigs[gameName];
+            if (!config) return;
+
+            score = 0;
+            gameTime = 0;
+            scoreDisplay.textContent = `${translations[currentLanguage]['score-label']}: ${score}`;
+            timeDisplay.textContent = `${translations[currentLanguage]['time-label']}: ${gameTime}`;
+
+            currentGameState = {
+                ...config,
+                state: config.init()
+            };
+
+            const title = translations[currentLanguage][config.titleKey];
+            const instructions = translations[currentLanguage][config.instructionsKey];
+            showMessageBox(title, instructions);
+
+            closeMessageBoxBtn.onclick = () => {
+                hideMessageBox();
+                gameActive = true;
+                timeInterval = setInterval(() => {
+                    gameTime++;
+                    timeDisplay.textContent = `${translations[currentLanguage]['time-label']}: ${gameTime}`;
+                }, 1000);
+                window.requestAnimationFrame(gameLoop);
+            };
+
+            // Remove all game-specific listeners to prevent duplicates
+            window.removeEventListener('keydown', handleInputGame1);
+            window.removeEventListener('keydown', handleInputGame2);
+            if(canvas) canvas.removeEventListener('mousedown', handleInputGame3);
+
+            if (gameName === 'game1') {
+                window.addEventListener('keydown', handleInputGame1);
+            } else if (gameName === 'game2') {
+                window.addEventListener('keydown', handleInputGame2);
+            } else if (gameName === 'game3') {
+                canvas.addEventListener('mousedown', handleInputGame3);
+            }
+        }
+        
+        // --- Event Listeners ---
+        // Settings panel
+        settingsToggleBtn.addEventListener('click', () => { settingsPanel.classList.toggle('open'); });
+        closeSettingsBtn.addEventListener('click', () => { settingsPanel.classList.remove('open'); });
+        langEnBtn.addEventListener('click', () => {
+            applyLanguage('en');
+            langEnBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            langEnBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900');
+            langArBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            langArBtn.classList.add('bg-gray-800', 'hover:bg-gray-900');
+        });
+        langArBtn.addEventListener('click', () => {
+            applyLanguage('ar');
+            langArBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            langArBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900');
+            langEnBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            langEnBtn.classList.add('bg-gray-800', 'hover:bg-gray-900');
+        });
+        
+        // Dyslexia settings functionality
+        function updateStyles() {
+            root.style.setProperty('--font-family', fontFamilySelect.value);
+            root.style.setProperty('--font-size', `${fontSizeSlider.value}px`);
+            root.style.setProperty('--line-height', lineHeightSlider.value);
+            root.style.setProperty('--letter-spacing', `${letterSpacingSlider.value}em`);
+            fontSizeValue.textContent = `${fontSizeSlider.value}px`;
+            lineHeightValue.textContent = lineHeightSlider.value;
+            letterSpacingValue.textContent = `${letterSpacingSlider.value}em`;
+            localStorage.setItem('dyslexia-settings', JSON.stringify({
+                fontFamily: fontFamilySelect.value,
+                fontSize: fontSizeSlider.value,
+                lineHeight: lineHeightSlider.value,
+                letterSpacing: letterSpacingSlider.value,
+            }));
+            applyLanguage(currentLanguage);
+        }
+
+        function loadSettings() {
+            const savedSettings = JSON.parse(localStorage.getItem('dyslexia-settings'));
+            if (savedSettings) {
+                fontFamilySelect.value = savedSettings.fontFamily;
+                fontSizeSlider.value = savedSettings.fontSize;
+                lineHeightSlider.value = savedSettings.lineHeight;
+                letterSpacingSlider.value = savedSettings.letterSpacing;
+            }
+            updateStyles();
+        }
+        
+        fontFamilySelect.addEventListener('change', updateStyles);
+        fontSizeSlider.addEventListener('input', updateStyles);
+        lineHeightSlider.addEventListener('input', updateStyles);
+        letterSpacingSlider.addEventListener('input', updateStyles);
+        closeMessageBoxBtn.addEventListener('click', hideMessageBox);
+        window.addEventListener('hashchange', handleHashChange);
+
+        // Ensure canvas is resized on window resize for responsiveness
+        function resizeCanvas() {
+            if (!canvas) return;
+            const newWidth = appContainer.clientWidth * 0.9;
+            canvas.width = newWidth > 800 ? 800 : newWidth;
+            canvas.height = newWidth > 800 ? 400 : newWidth / 2;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.onload = function() {
+            loadLanguage();
+            loadSettings();
+            handleHashChange(); // Initial page load
+        };
+
+    </script>
 </body>
 </html>
